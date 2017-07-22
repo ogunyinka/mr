@@ -1,0 +1,258 @@
+#====================================================
+#function starts here
+Mixture_Ratio <- function (NN) {
+
+for (i in c(1:16)) {
+
+#N will be supplied by the user
+
+#compute n1 and n2
+n1 <- round(NN/3)
+n2 <- round(n1/3)
+seed.value <- abs(round(rnorm(1,sd=300)))
+
+#Generate population data of Variable
+set.seed(seed.value)
+X1 <- 1:NN + rnorm(NN,45, 3)
+set.seed(seed.value)
+X2 <- 1:NN/4 + rnorm(NN,40, 2)
+set.seed(seed.value)
+X3 <- 1:NN/3 + rnorm(NN,35, 4)
+set.seed(seed.value)
+X4 <- 1:NN/2 + rnorm(NN,30, 5)
+set.seed(seed.value)
+X5 <- 1:NN/5 + rnorm(NN,25, 7)
+
+#Sample the 1st phase sample of n1 for Variable
+set.seed(seed.value)
+x11 <- sample(X1, n1)
+set.seed(seed.value)
+x12 <- sample(X2, n1)
+set.seed(seed.value)
+x13 <- sample(X3, n1)
+set.seed(seed.value)
+x14 <- sample(X4, n1)
+set.seed(seed.value)
+x15 <- sample(X5, n1)
+
+#Sample the 2nd phase sample of n2 for Variable
+set.seed(seed.value)
+x21 <- 1:n2 + rnorm(n2,45, 10)
+set.seed(seed.value + 10)
+x22 <- 1:n2/4 + rnorm(n2,100, 8)
+set.seed(seed.value + 2)
+x23 <- 1:n2/3 + rnorm(n2,55, 15)
+set.seed(seed.value + 15)
+x24 <- 1:n2/2 + rnorm(n2,80, 5)
+set.seed(seed.value + 9)
+x25 <- 1:n2/5 + rnorm(n2,25, 7)
+
+#Sample the 2nd phase sample of n2 for Variable
+#set.seed(seed.value)
+#x21 <- sample(x11, n2)
+#set.seed(seed.value)
+#x22 <- sample(x12, n2)
+#set.seed(seed.value)
+#x23 <- sample(x13, n2)
+#set.seed(seed.value)
+#x24 <- sample(x14, n2)
+#set.seed(seed.value)
+#x25 <- sample(x15, n2)
+
+#Generate population data for Attributes
+set.seed(seed.value)
+T1 <- rbinom(NN, 1, 0.50)
+set.seed(seed.value)
+T2 <- rbinom(NN, 1, 0.51)
+set.seed(seed.value)
+T3 <- rbinom(NN, 1, 0.52)
+set.seed(seed.value)
+T4 <- rbinom(NN, 1, 0.53)
+set.seed(seed.value)
+T5 <- rbinom(NN, 1, 0.54)
+
+#Sample the 1st phase sample of n1 for Attributes
+set.seed(seed.value)
+t11 <- sample(T1, n1)
+set.seed(seed.value)
+t12 <- sample(T2, n1)
+set.seed(seed.value)
+t13 <- sample(T3, n1)
+set.seed(seed.value)
+t14 <- sample(T4, n1)
+set.seed(seed.value)
+t15 <- sample(T5, n1)
+
+#Sample the 2nd phase sample of n2 for Attributes
+set.seed(seed.value)
+t21 <- rbinom(n2, 1, 0.50)
+set.seed(seed.value)
+t22 <- rbinom(n2, 1, 0.51)
+set.seed(seed.value)
+t23 <- rbinom(n2, 1, 0.52)
+set.seed(seed.value)
+t24 <- rbinom(n2, 1, 0.53)
+set.seed(seed.value)
+t25 <- rbinom(n2, 1, 0.54)
+
+#Sample the 2nd phase sample of n2 for Attributes
+#set.seed(seed.value)
+#t21 <- sample(t11, n2)
+#set.seed(seed.value)
+#t22 <- sample(t12, n2)
+#set.seed(seed.value)
+#t23 <- sample(t13, n2)
+#set.seed(seed.value)
+#t24 <- sample(t14, n2)
+#set.seed(seed.value)
+#t25 <- sample(t15, n2)
+
+#Compute for Y population data
+set.seed(seed.value)
+YY <- (X2/2) + (X1*(T1+T2+T3+T4+T5)/5) + ((T1+T2+T3+T4+T5)/3) + rnorm(NN,sd=4) + rbinom(NN, 1, 0.05)
+#YY <- rnorm(NN, mean(), sd())
+
+set.seed(seed.value)
+yy <- (t21/2) + (x21*(t21+t22+t23+t24+t25)/5) + ((x21+x22+x23+x24+x25)/3) + rnorm(n2,sd=4) + rbinom(n2, 1, 0.05)
+#yy <- sample(YY, n2)
+
+#Data frame for all variables and attributes at the 2nd phase
+df_xt <- data.frame(yy, x21, x22, x23, x24, x25, t21, t22, t23, t24, t25)
+
+#computation of correlation coefficient of data at the 2nd phase
+cor_xt <- cor(df_xt, method = "pearson")
+
+cor_x1 <- cor(yy, x21, method = "pearson")
+cor_x2 <- cor(yy, x22, method = "pearson")
+cor_x3 <- cor(yy, x23, method = "pearson")
+cor_x4 <- cor(yy, x24, method = "pearson")
+cor_x5 <- cor(yy, x25, method = "pearson")
+
+cor_t1 <- cor(yy, t21, method = "pearson")
+cor_t2 <- cor(yy, t22, method = "pearson")
+cor_t3 <- cor(yy, t23, method = "pearson")
+cor_t4 <- cor(yy, t24, method = "pearson")
+cor_t5 <- cor(yy, t25, method = "pearson")
+
+#Population mean of Y square
+Y_bar <- round(mean(yy), digits=4)
+Y_bar_2 <- (mean(yy))^2
+
+#Population Coefficient of variation of Y square
+Y_CV <- round(sd(yy)/Y_bar, digits=4)
+Y_CV_2 <- (sd(yy)/Y_bar)^2
+
+#Computation of titas
+tita_1 <- round((1/n1)-(1/NN), digits=4)
+tita_2 <- round((1/n2)-(1/NN), digits=4)
+
+#Computation of Multiple Correlation Coefficients (CC)
+#================================================
+MCC_x1 <- summary(lm(yy ~ x21 + x22 + x23 + x24 + x25))
+MCC_x1_2 <- round(MCC_x1$r.squared, digits=4)
+
+MCC_x2 <- summary(lm(yy ~ x21 + x22 + x23))
+MCC_x2_2 <- round(MCC_x2$r.squared, digits=4)
+
+MCC_x3 <- summary(lm(yy ~ x24 + x25))
+MCC_x3_2 <- round(MCC_x3$r.squared, digits=4)
+#================================================
+MCC_t1 <- summary(lm(yy ~ t21 + t22 + t23 + t24 + t25))
+MCC_t1_2 <- round(MCC_t1$r.squared, digits=4)
+
+MCC_t2 <- summary(lm(yy ~ t21 + t22 + t23))
+MCC_t2_2 <- round(MCC_t2$r.squared, digits=4)
+
+MCC_t3 <- summary(lm(yy ~ t24 + t25))
+MCC_t3_2 <- round(MCC_t3$r.squared, digits=4)
+#================================================
+#MCC for all auxiliary variables (x's) and attributes (t's) on  the study variable (Y)
+MCC_tx1 <- summary(lm(yy ~ x21 + x22 + x23 + x24 + x25 + t21 + t22 + t23 + t24 + t25))
+MCC_tx1_2 <- round(MCC_tx1$r.squared, digits=4)
+
+#MCC for auxiliary variables (1,2 and 3) and attributes (1, 2 and 3) on  the study variable (Y)
+MCC_tx2 <- summary(lm(yy ~ x21 + x22 + x23 + t21 + t22 + t23))
+MCC_tx2_2 <- round(MCC_tx2$r.squared, digits=4)
+
+#MCC for auxiliary variables (4 and 5) and attributes (4 and 5) on  the study variable (Y)
+MCC_tx3 <- summary(lm(yy ~ x24 + x25 + t24 + t25))
+MCC_tx3_2 <- round(MCC_tx3$r.squared, digits=4)
+
+#MCC for all auxiliary variables (x's) and some attributes (1,2 and 3) on  the study variable (Y)
+MCC_tx4 <- summary(lm(yy ~ x21 + x22 + x23 + x24 + x25 + t21 + t22 + t23))
+MCC_tx4_2 <- round(MCC_tx4$r.squared, digits=4)
+
+#MCC for some auxiliary variables (1,2 and 3) and all attributes (t's) on  the study variable (Y)
+MCC_tx5 <- summary(lm(yy ~ x21 + x22 + x23 + t21 + t22 + t23 + t24 + t25))
+MCC_tx5_2 <- round(MCC_tx5$r.squared, digits=4)
+
+#================================================
+
+#Computation of MSE for FIC
+MSE_F <- round(tita_2 * Y_bar_2 * Y_CV_2 * (1 - MCC_tx1_2), digits=4)
+
+#Computation of MSE for PIC-I
+MSE_1 <- round(Y_bar_2 * Y_CV_2 * (tita_2 * (1 - MCC_tx1_2) + (tita_1*(MCC_tx1_2 - MCC_tx2_2)) ), digits=4)
+
+#Computation of MSE for PIC-II
+MSE_2 <- round(Y_bar_2 * Y_CV_2 * (tita_2 + ((tita_1 - tita_2)*MCC_tx1_2) - (tita_1 * MCC_tx4_2)), digits=4)
+
+#Computation of MSE for PIC-III
+MSE_3 <- round(Y_bar_2 * Y_CV_2 * (tita_2 + ((tita_1 - tita_2)*MCC_tx1_2) - (tita_1 * MCC_tx5_2)), digits=4)
+
+#Computation of MSE for NIC
+MSE_0 <- round(Y_bar_2 * Y_CV_2 * (tita_2*(1-MCC_tx1_2) + (tita_1*MCC_tx1_2)), digits=4)
+
+#set all data frames
+paste ("Data frames are displayed here! ")
+paste (NN, n1, n2, seed.value, Y_bar_2, tita_1, tita_2, MCC_x1_2, MCC_x2_2, MCC_x3_2, MCC_t1_2, MCC_t2_2, MCC_t3_2)
+paste ("MSE(PIC-I) =",MSE_1, "  MSE(PIC-II) =",MSE_2, "  MSE(PIC-III) =",MSE_3, "  MSE(NIC) =",MSE_0)
+
+df_title <- data.frame ("Popution size", "Sample size1", "Sample size2", "seed value", "Y_bar_2", "theta 1", "theta 2", "MCC_x1_2", "MCC_x2_2", "MCC_x3_2", "MCC_t1_2", "MCC_t2_2", "MCC_t3_2")
+df_title_values <- data.frame (NN, n1, n2, seed.value, Y_bar_2, tita_1, tita_2, MCC_x1_2, MCC_x2_2, MCC_x3_2, MCC_t1_2, MCC_t2_2, MCC_t3_2)
+df_MSE <- data.frame ("MSE(PIC-I) = ", "MSE(PIC-II) = ", "MSE(PIC-III) = ", "MSE(NIC) = ")
+df_MSE_values <- data.frame (MSE_1, MSE_2, MSE_3, MSE_0)
+
+
+df_result <- data.frame (
+S_no = c(1:6),
+
+Info_Case = c("   FIC", "  PIC-I", "  PIC-II" ,"  PIC-III","  NIC", "=========="),
+MSE= c(MSE_F, MSE_1, MSE_2, MSE_3, MSE_0, "=========="),
+
+size = c("  Population", "   1st Phase", "   2nd Phase", "   Seed Value", "=========="," "),
+size = c(NN, n1, n2, seed.value, "=========="," "),
+
+Parameters = c("Pop. Mean(Y)2", "Varia. Coeff.(Y)2", "   Theta(1)", "   Theta(2)", "=========="," "),
+Parameters_val = c(round(Y_bar_2, digits=4), round(Y_CV_2, digits=4), round(tita_1, digits=4), round(tita_2, digits=4), "=========="," "),
+
+CC_x = c("CCyx1", "CCyx2", "CCyx3", "CCyx4", "CCyx5"," "),
+CC_x_val = c(round(cor_x1, digits=4), round(cor_x2, digits=4), round(cor_x3, digits=4), round(cor_x4, digits=4), round(cor_x5, digits=4)," "),
+
+CC_t = c("CCyt1", "CCyt2", "CCyt3", "CCyt4", "CCyt5"," "),
+CC_t_val = c(round(cor_t1, digits=4), round(cor_t2, digits=4), round(cor_t3, digits=4), round(cor_t4, digits=4), round(cor_t5, digits=4)," "),
+
+MCC.x.t = c("yx(1-5)", "yx(1-3)", "yx(4-5)", "yt(1-5)", "yt(1-3)", "yt(4-5)"),
+MCC.x.t.val = c(MCC_x1_2, MCC_x2_2, MCC_x3_2, MCC_t1_2, MCC_t2_2, MCC_t3_2),
+
+MCC.xt = c("ytx(1-5)", "ytx(1-3)", "ytx(4-5)","yt(1-3)x(1-5)", "yt(1-5)x(1-3)", ""),
+MCC.xt.val = c(MCC_tx1_2, MCC_tx2_2, MCC_tx3_2, MCC_tx4_2, MCC_tx5_2, ""),
+
+stringsAsFactors = FALSE
+)
+
+csvfile <- paste ("data",i,".csv")
+write.csv(df_result, file=csvfile, append = TRUE, fileEncoding = "UTF-16LE")
+
+
+kkk <- list (MSE_1, MSE_2, MSE_3, MSE_0)
+
+print(df_result)
+#print(cor_xt)
+
+NN = NN -650
+}
+
+}
+
+Mixture_Ratio(10000)
